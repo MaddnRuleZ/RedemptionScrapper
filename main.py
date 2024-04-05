@@ -18,6 +18,18 @@ def print_hi():
     scrapper.searchRoutine("tom@rozeedigital.com", "RuneScape05%")
     x = input()
 
+
+def rm_duplicates():
+    list = Utilö.read_text_file("firstm.trxt")
+    for l in list:
+        Utilö.append_no_duplicates("cleaned.txt", l)
+
+def get():
+    print()
+    scrapper = Scrapper(base_url)
+    scrapper.login("tom@rozeedigital.com", "RuneScape05%")
+    x = input()
+
 def scan_for_match():
     lines = Utilö.read_text_file("firstm.trxt")
     matches = []
@@ -26,15 +38,16 @@ def scan_for_match():
         for m in match:
             print(m)
             matches.append(m)
-
     print("#### Done")
     for match in matches:
         print(match)
 
-
-
+def rmdupli():
+    lines = Utilö.read_text_file("final.txt")
+    finalLines = Utilö.remove_duplicates(lines)
+    for line in finalLines:
+        Utilö.append_string_to_file("final2.txt", line)
 
 if __name__ == '__main__':
     print_hi()
-    # print_hi('PyCharm')
 

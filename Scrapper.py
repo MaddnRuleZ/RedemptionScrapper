@@ -3,7 +3,7 @@ import re
 import time
 from urllib.parse import urlparse, urljoin
 from selenium import webdriver
-from selenium.common import StaleElementReferenceException
+from selenium.common import StaleElementReferenceException, NoSuchElementException
 from selenium.webdriver import ActionChains, Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
@@ -51,7 +51,7 @@ class Scrapper:
         sign_in_button = self.driver.find_element(By.XPATH, "//button[contains(text(), 'Sign in')]")
         sign_in_button.click()
         time.sleep(3)
-
+        '''
         self.click_add_remove_filters_button()
         time.sleep(1)
         self.click_checkbox()
@@ -60,22 +60,41 @@ class Scrapper:
         time.sleep(1)
         self.enter_text("0000")
         time.sleep(1)
+        '''
 
-        input()
 
+        x = input("FIRST")
 
-        for x in range(0, 170):
+        elements = self.get_text_in_h6_elements()
+        for elem in elements:
+            Utilö.append_no_duplicates("cleaned.txt", elem)
+            print(elem)
+        x = input("SEC")
+
+        for x in range(0, 50):
             self.random_sleep()
             print("Rand Sleep iter" + str(x))
             actions = ActionChains(self.driver)
             actions.send_keys(Keys.END).perform()
-            if (x % 10 == 0):
-                self.save_page_source("htmltext.html")
+        x = input("1")
+
+        elements = self.get_text_in_h6_elements()
+        for elem in elements:
+            Utilö.append_no_duplicates("cleaned.txt", elem)
+            print(elem)
+
+        for x in range(0, 50):
+            self.random_sleep()
+            print("Rand Sleep iter" + str(x))
+            actions = ActionChains(self.driver)
+            actions.send_keys(Keys.END).perform()
+
+        elements = self.get_text_in_h6_elements()
+        for elem in elements:
+            Utilö.append_no_duplicates("cleaned.txt", elem)
+            print(elem)
 
         input("X")
-        input("JIK")
-        input("X")
-        self.save_page_source("htmltext.html")
 
     def searchRoutine(self, email, password):
         print("logging in")
@@ -89,22 +108,21 @@ class Scrapper:
         sign_in_button.click()
         time.sleep(3)
 
-        lines = Utilö.read_text_file("firstm.trxt")
-
+        lines = Utilö.read_text_file("cleaned.txt")
         for index, line in enumerate(lines, start=1):
-            try:
-                self.driver.get("https://app.trendrocket.io/search/" + line)
-                self.random_sleep()
-                ref = self.get_first_href()
-                num = self.extract_number(ref)
-                print(num)
-                self.driver.get("https://app.trendrocket.io/brands/" + str(num) + "/overview")
-                self.random_sleep()
-                url = self.get_href_from_element("MuiBox-root.css-wbddbz")
-                Utilö.append_string_to_file("final.txt", f"[{index}]{line}, {url}")
-            except:
-                Utilö.append_string_to_file("final.txt", f"!!!!{line}, Index: {index}")
-
+            if index > 2983: # todo del at cleaonlogic
+                try:
+                    self.driver.get("https://app.trendrocket.io/search/" + line)
+                    self.random_sleep()
+                    ref = self.get_first_href()
+                    num = self.extract_number(ref)
+                    print(num)
+                    self.driver.get("https://app.trendrocket.io/brands/" + str(num) + "/overview")
+                    self.random_sleep()
+                    url = self.get_href_from_element("MuiBox-root.css-wbddbz")
+                    Utilö.append_string_to_file("final2.txt", f"[{index}]{line}, {url}")
+                except:
+                    Utilö.append_string_to_file("final2.txt", f"!!!!{line}, Index: {index}")
 
     def get_href_from_element(self, class_name):
             # Find the element by class name
@@ -115,7 +133,23 @@ class Scrapper:
 
             return href
 
+    def get_text_in_h6_elements(self):
+        try:
+            h6_elements = self.driver.find_elements(By.TAG_NAME, 'h6')
+            h6_texts = [element.text for element in h6_elements]
+            return h6_texts
+        except NoSuchElementException:
+            print("No <h6> elements found.")
+            return None
 
+
+    def get_text_in_elements(self, class_name):
+        try:
+            elements = self.driver.find_elements(By.CLASS_NAME, class_name)
+            return elements
+        except NoSuchElementException:
+            print("Element not found.")
+            return None
 
     def get_first_href(self):
             # Find the first <a> element with the specified class
@@ -136,7 +170,7 @@ class Scrapper:
         else:
             return None
 
-    def random_sleep(self, minimum=2, maximum=5):
+    def random_sleep(self, minimum=1.5, maximum=2.5):
         """
         Introduces a random sleep delay between the given minimum and maximum seconds.
         Default minimum delay is 1 second and maximum delay is 5 seconds.

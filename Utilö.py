@@ -87,3 +87,43 @@ def remove_duplicates(input_list):
 
     return result_list
 
+def append_no_duplicates(file_path, search_string):
+    if not search_string_in_file(file_path, search_string):
+        append_string_to_file(file_path, search_string)
+    else:
+        print("VALUE ALREADY PRESENT " + search_string)
+
+
+
+def search_string_in_file(file_path, search_string):
+    try:
+        with open(file_path, 'r', encoding='utf-8') as file:
+            for line in file:
+                if search_string in line:
+                    return True
+            return False
+    except FileNotFoundError:
+        print("File not found.")
+        return False
+
+
+
+def remove_duplicates(data):
+    # Initialize an empty set to store unique URLs
+    unique_urls = set()
+    # Initialize an empty list to store entries with no duplicates
+    unique_data = []
+
+    for entry in data:
+        try:
+            # Extract the URL from the entry
+            url = entry.split(',')[1].strip()
+            # Check if the URL is already in unique_urls
+            if url not in unique_urls:
+                unique_data.append(entry)
+                unique_urls.add(url)
+        except IndexError:
+            # Skip this entry if IndexError occurs
+            continue
+
+    return unique_data
